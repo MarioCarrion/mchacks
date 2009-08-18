@@ -1,0 +1,215 @@
+#!/bin/bash
+#
+# Don't forget to read the README!
+#
+CHANGE_LOG_NAME="Mario Carrion"
+CHANGE_LOG_EMAIL_ADDRESS="mcarrion@novell.com"
+
+# Use this variable to add local enviroment paths 
+# (i.e. to include a custom executable script)
+EXTRA_PATH=$HOME/Documents/Repository/uia2atk/tools:$HOME/bin
+
+# Use this variable if you want to change the default terminal header 
+TERMINAL_HEADER="@dev:"
+
+# Colors, based on http://wiki.archlinux.org/index.php/Color_Bash_Prompt
+NO_COLOR='\e[0m'
+# regular colors
+BLACK='\e[0;30m'
+RED='\e[0;31m'
+GREEN='\e[0;32m'
+YELLOW='\e[0;33m'
+BLUE='\e[0;34m'
+MAGENTA='\e[0;35m'
+CYAN='\e[0;36m'
+WHITE='\e[0;37m'
+# emphasized (bolded) colors
+EBLACK='\e[1;30m'
+ERED='\e[1;31m'
+EGREEN='\e[1;32m'
+EYELLOW='\e[1;33m'
+EBLUE='\e[1;34m'
+EMAGENTA='\e[1;35m'
+ECYAN='\e[1;36m'
+EWHITE='\e[1;37m'
+# underlined colors
+UBLACK='\e[4;30m'
+URED='\e[4;31m'
+UGREEN='\e[4;32m'
+UYELLOW='\e[4;33m'
+UBLUE='\e[4;34m'
+UMAGENTA='\e[4;35m'
+UCYAN='\e[4;36m'
+UWHITE='\e[4;37m'
+# background colors
+BBLACK='\e[40m'
+BRED='\e[41m'
+BGREEN='\e[42m'
+BYELLOW='\e[43m'
+BBLUE='\e[44m'
+BMAGENTA='\e[45m'
+BCYAN='\e[46m'
+BWHITE='\e[47m'
+
+# We are going to load CUSTOM FILES
+# 
+# Basically the idea is to split multiple development paths or variables
+# into different files, that way we can keep this file as clean as possible.
+# This magic function tries to load those files.
+
+function pcustom {
+  if test x"$1" = x; then 
+  	echo -e "${RED}>>${NO_COLOR} Nothing to do, no arguments provided."
+  else
+  	source $1 && echo -e "${RED}>>${NO_COLOR} Loaded: '$1'" || echo -e "${RED}>>${NO_COLOR} Not loaded"
+  fi
+}
+
+_P_REV=$1
+if test x"$_P_REV" = x; then
+  _P_REV="trunk"
+fi
+
+HOME_ROOT=$HOME/.root-dev/$_P_REV
+_P_PREFIX=$HOME_ROOT
+GNOME_PREFIX=$HOME_ROOT
+
+if [ -d $HOME_ROOT ]; then
+  echo -e "${RED}>>${NO_COLOR} Using environment: ${RED}$_P_REV"
+else
+  mkdir -p $HOME_ROOT && echo -e "${RED}>>${NO_COLOR} Using environment (for the first time): ${RED}$_P_REV" || echo -e "${RED}>>${NO_COLOR} Unable to create local path."
+fi
+
+# configure-related functions
+function pautogen {
+  _nameTerminalUpdate "autogen: `basename $PWD`"
+  ./autogen.sh --prefix=$_P_PREFIX $* && _mynotify "pautogen" || _mynotify 1 "pautogen"
+  _nameTerminalUpdate
+}
+function pconfigure {
+  _nameTerminalUpdate "configure: `basename $PWD`"
+  ./configure --prefix=$_P_PREFIX $* && _mynotify "pconfigure" || _mynotify 1 "pconfigure"
+  _nameTerminalUpdate
+}
+function pbootstrap {
+  _nameTerminalUpdate "boostrap: `basename $PWD`"
+  if test x"$1" = x; then
+    echo -e "${RED}>>${NO_COLOR} Use pbootstrap bootstrap-file"
+    echo -e "${RED}>>${NO_COLOR} For example: pbootstrap bootstrap-2.12"
+  else
+    ./$1 --prefix=$_P_PREFIX $2 && _mynotify "pbootstrap" || _mynotify 1 "pbootstrap"
+  fi
+  _nameTerminalUpdate
+}
+
+# make-related functions
+function pmkuci {
+  _nameTerminalUpdate "make uninstall/clean/autogen/install: `basename $DIR`"
+  make uninstall && make clean && autogenmono $* && make install && _mynotify "pmkuci" || _mynotify 1 "pmkuci" 
+  _nameTerminalUpdate 
+}
+function pmk { 
+  _nameTerminalUpdate "make: `basename $PWD`"
+  make $* && _mynotify "pmk" || _mynotify 1 "pmk"
+  _nameTerminalUpdate 
+}
+function pmki { 
+  _nameTerminalUpdate "make install: `basename $PWD`"
+  make install $* && _mynotify "mki" || _mynotify 1 "pmki" 
+  _nameTerminalUpdate 
+}
+function pmku { 
+  _nameTerminalUpdate "make uninstall: `basename $PWD`"
+  make uninstall && _mynotify "pmku" || _mynotify 1 "pmku" 
+  _nameTerminalUpdate
+}
+function pmkc { 
+  _nameTerminalUpdate "make clean: `basename $PWD`"
+  make clean && _mynotify "mkc" || _mynotify 1 "mkc" 
+  _nameTerminalUpdate
+}
+function pmkdc { 
+  _nameTerminalUpdate "make dist-clean: `basename $PWD`"
+  make dist clean && _mynotify "pmkdc" || _mynotify 1 "pmkdc"
+  _nameTerminalUpdate
+}
+
+# SVN related functions
+function psvnup {
+  svn update && _mynotify "psvnup" || _mynotify 1 "psvnup"
+}
+
+function psvnupa {
+  ORIG_PWD=$PWD
+  echo -e "${RED}>>${NO_COLOR} Calling svn update in current folder: '${RED}${PWD}${NO_COLOR}'"
+  for DIR in `ls -d $PWD/*/`; do
+    if [ -d $DIR/.svn ]; then
+      _nameTerminalUpdate "svn up: `basename $DIR`"
+      cd $DIR && psvnup
+    fi
+  done
+  _nameTerminalUpdate
+  cd $ORIG_PWD
+}
+
+# "Private" functions
+function _mynotify {
+  MSG_CONTENT=$1
+  MSG_URGENCY="normal"
+  MSG_RESULT="done"
+
+  echo $1 | grep "[^0-9]" > /dev/null 2>&1
+  # Is first argument a numeric value?
+  if [ "$?" -ne "0" ]; then 
+    if [ "$1" -eq "1" ]; then 
+      MSG_CONTENT=$2
+      MSG_URGENCY="critical"
+      MSG_RESULT="failed"
+    fi
+  fi
+ 
+  notify-send -t 2500 -u $MSG_URGENCY "$MSG_CONTENT $MSG_RESULT: '`basename $PWD`'"
+}
+
+# Functions to update bash terminal header
+
+# Ripped-off from: http://fvue.nl/wiki/NameTerminal
+function _nameTerminal {
+    [ "${TERM:0:5}" = "xterm" ]   && local ansiNrTab=0
+    [ "$TERM"       = "rxvt" ]    && local ansiNrTab=61
+    [ "$TERM"       = "konsole" ] && local ansiNrTab=30 ansiNrWindow=0
+        # Change tab title
+    [ $ansiNrTab ] && echo -n $'\e'"]$ansiNrTab;$1"$'\a'
+        # If terminal support separate window title, change window title as well
+    [ $ansiNrWindow -a "$2" ] && echo -n $'\e'"]$ansiNrWindow;$2"$'\a'
+} # nameTerminal()
+
+function _nameTerminalUpdate {
+  if test x"$1" = x; then 
+    _nameTerminal "$TERMINAL_HEADER$_P_REV"
+  else
+    _nameTerminal "$TERMINAL_HEADER$_P_REV -> $1"
+  fi
+}
+
+export DYLD_LIBRARY_PATH=$_P_PREFIX/lib:$DYLD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$_P_PREFIX/lib:$LD_LIBRARY_PATH
+export C_INCLUDE_PATH=$_P_PREFIX/include:$GNOME_PREFIX/include
+export ACLOCAL_PATH=$_P_PREFIX/share/aclocal
+export PKG_CONFIG_PATH=$_P_PREFIX/lib/pkgconfig:$GNOME_PREFIX/lib/pkgconfig
+export MANPATH=$_P_PREFIX/share/man:$MANPATH
+# a11y support
+export GTK_MODULES=gail:atk-bridge
+
+PATH=$EXTRA_PATH:$PATH
+PATH=$_P_PREFIX/bin:$PATH
+
+# Magically detect if current directory is .git-based
+if [ -d $PWD/.git ]; then
+  GITPS1='$(__git_ps1 "%s")'
+  PS1="$EWHITE$TERMINAL_HEADER$RED$_P_REV$NO_COLOR:$GREEN$GITPS1$NO_COLOR:\w-> "
+else
+  PS1="$EWHITE$TERMINAL_HEADER$NO_COLOR:$RED$_P_REV$NO_COLOR:\w-> "
+fi
+
+_nameTerminal "$TERMINAL_HEADER$_P_REV"

@@ -1,0 +1,65 @@
+PARALLEL ENVIRONMENT FOR BASH
+
+The idea behind this source is to support multiple parallel development
+environments, to keep track of different environments, is useful
+in Mono-based applications but should work on any other development
+environment. 
+
+Based on http://www.mono-project.com/Parallel_Mono_Environments
+
+Looks better on a terminal with black background
+
+FEATURES
+
+- Raises notify messages depending on success or failure of executed command.
+- New lazy-like aliases (see next) All the aliases use 'p' as prefix.
+- Custom source loading.
+- Shows the current git branch when calling pexport in a git-based folder.
+
+INSTALLING
+
+You will need to add the following alias into your .bashrc:
+
+function pexport {
+   source ~/path/to/mono-dev $1
+}
+
+Notice that you need to change your "~/path/to/p-dev" to where your
+p-dev file exists. With this alias you can use:
+
+$ pexport trunk
+$ pexport 2.4
+$ pexport branch-name
+$ pexport whatever
+
+to use multiple parallel environments, when no argument is used "trunk" 
+is set by default.
+
+MAKE ALIASES
+
+- pmki   = make install
+- pmku   = make uninstall
+- pmkuci = make uninstall && make clean && autogen && make install
+- pmkc   = make clean
+- pmkdc  = make dist clean
+
+AUTOGEN/CONFIGURE ALIASES
+
+- pautogen   = autogen.sh with prefix (you also add your arguments)
+- pconfigure = configure with prefix  (you also add your arguments)
+- pbootstrap = bootstrap with prefix  (you also add your arguments)
+
+SVN ALIASES
+
+- psvnup    = svn update
+- psvnupall = svn update in every single folder in current folder
+
+CUSTOM SOURCES
+
+You can also use "pcustom" to load custom scripts, for example
+if you need to define environment variables instead of adding those here
+you will write a custom-var.sh and will use:
+
+$ lcustom ~/custom-var.sh
+
+

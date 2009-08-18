@@ -1,4 +1,8 @@
 README
 
 This repository contains some hacks I've been using for
-development, may be useful for you too.
+development, may be useful to you too.
+
+- parallel-env: Bash source to support multiple parallel
+  development environments.
+ 
