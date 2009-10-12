@@ -70,6 +70,9 @@ if test x"$_P_REV" = x; then
   _P_REV="trunk"
 fi
 
+# Hack in some quick 64-bit support
+test $CPU = x86_64 && arch="64"
+
 HOME_ROOT=$HOME/.root-dev/$_P_REV
 _P_PREFIX=$HOME_ROOT
 GNOME_PREFIX=$HOME_ROOT
@@ -77,7 +80,7 @@ GNOME_PREFIX=$HOME_ROOT
 if [ -d $HOME_ROOT ]; then
   echo -e "${RED}>>${NO_COLOR} Using environment: ${RED}$_P_REV"
 else
-  mkdir -p $HOME_ROOT && echo -e "${RED}>>${NO_COLOR} Using environment (for the first time): ${RED}$_P_REV" || echo -e "${RED}>>${NO_COLOR} Unable to create local path."
+  mkdir -p $HOME_ROOT &&  echo -e "${RED}>>${NO_COLOR} Using environment (for the first time): ${RED}$_P_REV" || echo -e "${RED}>>${NO_COLOR} Unable to create local path."
 fi
 
 # configure-related functions
@@ -198,6 +201,12 @@ export C_INCLUDE_PATH=$_P_PREFIX/include:$GNOME_PREFIX/include
 export ACLOCAL_PATH=$_P_PREFIX/share/aclocal
 export PKG_CONFIG_PATH=$_P_PREFIX/lib/pkgconfig:$GNOME_PREFIX/lib/pkgconfig
 export MANPATH=$_P_PREFIX/share/man:$MANPATH
+_PYTHONPATH=$_P_PREFIX/lib$arch/python
+if [ ! -d $HOME_ROOT ]; then
+  mkdir -p $_PYTHONPATH || echo -e "${RED}>>${NO_COLOR} Unable to create local python path."
+fi
+export PYTHONPATH=$_PYTHONPATH:$PYTHONPATH
+
 # a11y support
 export GTK_MODULES=gail:atk-bridge
 
