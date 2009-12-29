@@ -1,0 +1,30 @@
+README
+
+In an effort to keep my sanity I decided to write these scripts. 
+
+Why? Because I want to keep all my repositories clean. Most of the times I need to
+checkout different projects from different SCM to keep parallel versions installed
+of the same application or library, keeping them syncronized and clean is a mess, 
+you are spending too much time trying to see what repository you are using and 
+the current parallel environment running, you spend too much time keeping that clean.
+
+Sanitas (latin of Sanity) [proposed name, may change in the future]
+
+Shell scripts in bin/:
+- __sexport : must be defined as a function in bashrc
+- __sdestroy: defined as function in __sexport
+- __srestore: defined as function in __sexport
+
+Ruby scripts in ./:
+- sdetect : detects what repository is using current path
+- screate : creates a new parallel environment
+- slist : lists parallel environments
+- sremove : removes parallel environment
+
+INSTALL (this needs change)
+
+export PATH="/path/sanitas:"$PATH
+function sexport {
+  source /path/sanitas/bin/__sexport $1
+}
+
