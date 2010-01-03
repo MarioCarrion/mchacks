@@ -27,6 +27,7 @@ module Sanitas
       super(path)
       @name = "Git"
       @friendly_name = "git"
+      @branch = "$(__git_ps1 \"%s\")"
     end
 
     def detect?

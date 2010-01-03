@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+# Default custom PS1
 S_CUSTOMPS1="\w-> "
 
 # Helper environment variables
@@ -111,18 +112,25 @@ function s_prompt_command {
 
   arr=()
   index=0
+  IFS=$'\n'
   for item in `sdetect -p $PWD` ; do 
-      if test "x${item}" = "xabort:" ; then
-        break
-      fi 
-      arr[${index}]=${item}
+    if test "x${item}" = "xabort:" ; then
+      break
+    fi 
+    arr[${index}]=${item}
     let "index=$index + 1"
   done
-
-  if test "$index" = "4" ; then
+  
+  if [ $index -gt 3 ] ; then
     export S_NOTDETECTED=0
     export S_REPOPATH=${arr[3]}
-    export PS1="@$S_ENV:${arr[1]} $S_CUSTOMPS1"
+    
+    # If repository supports local branching we show it
+    if [ $index -eq 5 ] ; then
+      export PS1="@$S_ENV:${arr[1]} (${arr[4]}) $S_CUSTOMPS1"
+    else
+      export PS1="@$S_ENV:${arr[1]} $S_CUSTOMPS1"
+    fi
   else
     export S_REPOPATH=$PWD
     export S_NOTDETECTED=1
@@ -130,5 +138,4 @@ function s_prompt_command {
   fi
 }
 PROMPT_COMMAND="s_prompt_command"
-
 

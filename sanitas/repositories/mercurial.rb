@@ -25,6 +25,7 @@ module Sanitas
       super(path)
       @name = "Mercurial"
       @friendly_name = "hg"
+      @branch = "$(hg branch)"
     end
 
     def detect?
@@ -32,7 +33,6 @@ module Sanitas
         return false
       end
 
-      # FIXME: This won't work on non UNIX-like systems
       output = `hg status #{@path} 2>&1`
       if output[0,5] == "abort"
 	return false

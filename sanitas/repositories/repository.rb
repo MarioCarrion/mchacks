@@ -26,13 +26,14 @@ module Sanitas
     # Notice :repo_path might be different to path, for example in git
     # repositories :repo_path will be the path containing the '/path/.git/' folder
     # and :path will be something under '/path/'
-    attr_accessor :repo_path, :path, :name, :friendly_name
+    attr_accessor :repo_path, :path, :name, :friendly_name, :branch
 
     def initialize(path)
       @path = path
       @repo_path = nil
       @name = nil
       @friendly_name = nil
+      @branch = nil
     end
 
     def detect?

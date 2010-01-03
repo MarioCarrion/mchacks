@@ -69,4 +69,5 @@ else
   puts "#{repository.friendly_name}"
   puts "#{repository.path}"
   puts "#{repository.repo_path}"
+  puts "#{repository.branch}"
 end
