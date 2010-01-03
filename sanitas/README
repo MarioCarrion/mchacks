@@ -13,8 +13,6 @@ Sanitas (latin of Sanity) [proposed name, may change in the future]
 
 Shell scripts in bin/:
 - __sexport : must be defined as a function in bashrc
-- __sdestroy: defined as function in __sexport
-- __srestore: defined as function in __sexport
 
 Ruby scripts in ./:
 - sdetect : detects what repository is using current path
