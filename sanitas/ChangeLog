@@ -1,3 +1,17 @@
+2010-01-02  Mario Carrion  <mario@carrion.mx>
+
+	* README: Updated. 
+	* slist, 
+	  screate: Catching MissingArgument and InvalidOption, default
+	$0 option to --name.
+	* sdetect: Catching MissingArgument and InvalidOption. Added bazaar.
+	* sremove: 
+	* bin/__sexport: Content from __srestore and __sdestroy
+	moved into file.
+	* bin/__srestore, 
+	  bin/__sdestroy: Removed, content moved to __sexport.
+	* repositories/bazaar.rb: Detects Bazaar repositories.
+
 2009-12-28  Mario Carrion  <mario@carrion.mx>
 
 	Initial import

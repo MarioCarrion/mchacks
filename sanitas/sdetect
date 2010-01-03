@@ -25,6 +25,7 @@ require File.join(File.expand_path(File.dirname(__FILE__)), "repositories", "fac
 require_loaderror { "git.rb" }
 require_loaderror { "subversion.rb" }
 require_loaderror { "mercurial.rb" }
+require_loaderror { "bazaar.rb" }
 
 options = {}
 optparse = OptionParser.new do |opts|
@@ -40,7 +41,13 @@ optparse = OptionParser.new do |opts|
     exit
   end
 end
-optparse.parse!
+begin
+  optparse.parse!
+rescue OptionParser::InvalidOption => e
+rescue OptionParser::MissingArgument => e
+  puts "Error: #{e}\nUse: #{File.basename(__FILE__)} -h for more information."
+  exit 0
+end
 
 # No path provided, using working directory.
 if options[:path] == nil

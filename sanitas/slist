@@ -37,7 +37,13 @@ optparse = OptionParser.new do |opts|
     exit
   end
 end
-optparse.parse!
+begin
+  optparse.parse!
+rescue OptionParser::InvalidOption => e
+rescue OptionParser::MissingArgument => e
+  puts "Error: #{e}\nUse: #{File.basename(__FILE__)} -h for more information."
+  exit 0
+end
 
 environments = Sanitas::Environment.list(options[:root])
 if environments == nil
