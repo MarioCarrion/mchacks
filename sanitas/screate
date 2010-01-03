@@ -20,7 +20,6 @@
 # THE SOFTWARE.
 
 require 'optparse'
-#require 'utils/environment.rb'
 require File.join(File.expand_path(File.dirname(__FILE__)), "utils", "environment.rb")
 
 options = {}
@@ -42,10 +41,21 @@ optparse = OptionParser.new do |opts|
     exit
   end
 end
-optparse.parse!
+begin
+  optparse.parse!
+rescue OptionParser::InvalidOption => e
+rescue OptionParser::MissingArgument => e
+  puts "Error: #{e}\nUse: #{File.basename(__FILE__)} -h for more information."
+  exit 0
+end
 
 if options[:name] == nil
-  puts "abort: Name missing."
+  if ARGV.count == 0
+    puts "abort: Name missing."
+    exit 0
+  else # We set the first argument as name
+   options[:name] = ARGV[0]
+  end
 end
 
 created = Sanitas::Environment.create?(options[:name],options[:root])
