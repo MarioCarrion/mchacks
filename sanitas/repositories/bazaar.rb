@@ -28,17 +28,13 @@ module Sanitas
     end
 
     def detect?
-      if !is_path_clean?
-        return false
-      end
-      
+      return false unless is_path_clean?
+
       output = `bzr version-info #{@path} 2>&1`
-      if output[0,10] != "bzr: ERROR"
-        @repo_path = @path
-        return true
-      else
-        return false
-      end
+      return false if output[0,10] == "bzr: ERROR"
+      
+      @repo_path = @path
+      true
     end
 
   end

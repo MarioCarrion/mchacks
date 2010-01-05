@@ -22,11 +22,6 @@
 require 'optparse'
 require File.join(File.expand_path(File.dirname(__FILE__)), "repositories", "factory.rb")
 
-require_loaderror { "git.rb" }
-require_loaderror { "subversion.rb" }
-require_loaderror { "mercurial.rb" }
-require_loaderror { "bazaar.rb" }
-
 options = {}
 optparse = OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} -p PATH"
@@ -43,14 +38,13 @@ optparse = OptionParser.new do |opts|
 end
 begin
   optparse.parse!
-rescue OptionParser::InvalidOption => e
-rescue OptionParser::MissingArgument => e
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
   puts "Error: #{e}\nUse: #{File.basename(__FILE__)} -h for more information."
   exit 0
 end
 
 # No path provided, using working directory.
-if options[:path] == nil
+if options[:path].nil?
   options[:path] = Dir.pwd
 end
 
@@ -62,7 +56,7 @@ Sanitas::Factory::get_repositories(options[:path]).each do |repo|
   end
 end
 
-if repository == nil
+if repository.nil?
   puts "abort: no repository detected."
 else
   puts "#{repository.name}"

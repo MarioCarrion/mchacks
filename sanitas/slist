@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# Copyright (c) 2009 Mario Carrion <mario@carrion.mx>
+# Copyright (c) 2009-2010 Mario Carrion <mario@carrion.mx>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,6 @@
 # THE SOFTWARE.
 
 require 'optparse'
-#require 'utils/environment.rb'
 require File.join(File.expand_path(File.dirname(__FILE__)), "utils", "environment.rb")
 
 options = {}
@@ -39,14 +38,13 @@ optparse = OptionParser.new do |opts|
 end
 begin
   optparse.parse!
-rescue OptionParser::InvalidOption => e
-rescue OptionParser::MissingArgument => e
+rescue OptionParser::InvalidOption, OptionParser::MissingArgument => e
   puts "Error: #{e}\nUse: #{File.basename(__FILE__)} -h for more information."
   exit 0
 end
 
 environments = Sanitas::Environment.list(options[:root])
-if environments == nil
+if environments.nil?
   puts
 else
   environments.each do |env| print "#{env}\t" end

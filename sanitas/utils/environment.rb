@@ -27,28 +27,25 @@ module Sanitas
 
     def Environment.create?(name,path=nil)
       path = File.join(Environment::format_path(path), name)
-
-      if File.exists?(path)
-        return false
-      end
+      return false if File.exists?(path) 
 
       begin
         FileUtils.mkdir_p(path)
       rescue SystemCallError => e
-        return false
+        false
       end
 
-      return true
+      true
     end
 
     def Environment.format_path(path=nil)
-      if path == nil
+      if path.nil?
         # FIXME: hardcoded path. hardcoded path separator?
         path = File.join(Etc::getpwuid.dir,".root-dev/")
       elsif path[-1].chr != "/"
         path += "/"
       end
-      return path
+      path
     end
 
     def Environment.list(path=nil)
@@ -64,23 +61,20 @@ module Sanitas
         end
       end
 
-      return result
+      result
     end
 
     def Environment.remove?(name,path=nil)
       path = File.join(Environment::format_path(path), name)
-
-      if !File.exists?(path) || !File.directory?(path)
-        return false
-      end
+      return false if !File.exists?(path) || !File.directory?(path)
 
       begin
         FileUtils.rm_rf(path)
       rescue SystemCallError 
-        return false
+        false
       end
 
-      return true
+      true
     end
   end
  

@@ -31,19 +31,17 @@ module Sanitas
     end
 
     def detect?
-      if !is_path_clean?
-        return false
-      end
+      return false unless is_path_clean?
 
       context = Svn::Client::Context.new
       begin
         Svn::Client.info(@path, nil, nil, nil, false, context)
       rescue Svn::Error::WcNotDirectory
-        return false
+        false
       end
 
       @repo_path = @path
-      return true
+      true
     end
   end
 

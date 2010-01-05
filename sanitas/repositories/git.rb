@@ -1,4 +1,4 @@
-# Copyright (c) 2009 Mario Carrion <mario@carrion.mx>
+# Copyright (c) 2009-2010 Mario Carrion <mario@carrion.mx>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require 'rubygems'
 require 'git'
+
+require File.join(File.expand_path(File.dirname(__FILE__)), "..", "repositories", "repository")
 
 module Sanitas
   # Detects Git repositories
@@ -31,20 +34,16 @@ module Sanitas
     end
 
     def detect?
-      if !is_path_clean?
-        return false
-      end
+      return false unless is_path_clean?
 
-      return detect_recursive?(@path)
+      detect_recursive?(@path)
     end
 
     # Git.open throws an exception when opening any path but "root"
     # so, we are trying to find the root here, we will store
     # this value to compare it later when calling detect again
     def detect_recursive?(path)
-      if path == "/"
-        return false
-      end
+      return false if path == "/"
 
       begin
         git = Git.open(path)
@@ -59,7 +58,7 @@ module Sanitas
       end
 
       @repo_path = path
-      return true
+      true
     end
   end
 

@@ -49,7 +49,7 @@ rescue OptionParser::MissingArgument => e
   exit 0
 end
 
-if options[:name] == nil
+if options[:name].nil?
   if ARGV.count == 0
     puts "abort: Name missing."
     exit 0

@@ -24,7 +24,7 @@ require File.join(File.expand_path(File.dirname(__FILE__)), "..", "repositories"
 # and catch LoadError exceptions
 def require_loaderror(&block)
   begin 
-    require File.join(File.expand_path(File.dirname(__FILE__)), ".", block.call)
+    require File.join(File.expand_path(File.dirname(__FILE__)), "..", "repositories", block.call)
   rescue LoadError
   end
 end
@@ -39,7 +39,7 @@ module Sanitas
       @@repositories.values.each do |repository|
         result << repository.new(path)
       end
-      return result
+      result
     end
 
     def Factory.register(repository)
@@ -49,3 +49,8 @@ module Sanitas
 
 end
 
+# Loading known repositories
+require_loaderror { "git.rb" }
+require_loaderror { "subversion.rb" }
+require_loaderror { "mercurial.rb" }
+require_loaderror { "bazaar.rb" }

@@ -29,17 +29,13 @@ module Sanitas
     end
 
     def detect?
-      if !is_path_clean?
-        return false
-      end
+      return false unless is_path_clean?
 
       output = `hg status #{@path} 2>&1`
-      if output[0,5] == "abort"
-	return false
-      else
-        @repo_path = @path
-        return true
-      end
+      return false if output[0,5] == "abort"
+      
+      @repo_path = @path
+      true
     end
   end
 

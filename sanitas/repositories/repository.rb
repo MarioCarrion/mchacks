@@ -18,8 +18,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require File.join(File.expand_path(File.dirname(__FILE__)), "..", "repositories", "factory")
-
 module Sanitas
 
   class Repository
@@ -37,17 +35,13 @@ module Sanitas
     end
 
     def detect?
-      return false
+      false
     end
 
     # - '/path/file' -> '/path'
     # - '/path/' -> '/path'
     def is_path_clean?
-      if @path == nil
-        return false
-      elsif !File.exists?(@path)
-        return false
-      end
+      return false if @path.nil? || !File.exists?(@path)
 
       if @path[-1].chr == "/"
         @path = @path[0, @path.length - 1]
@@ -55,17 +49,13 @@ module Sanitas
 
       if !File.directory?(@path)
         dirname = File.dirname(@path)
-        if !File.exists?(dirname)
-	  return false
-	elsif !File.directory?(dirname)
-	  return false
-	else
-	  @path = dirname
-	  return true
-	end
-      else
-        return true
+        return false unless File.exists?(dirname)
+	return false unless File.directory?(dirname)
+	
+	@path = dirname
       end
+      
+      true
     end
   end
  

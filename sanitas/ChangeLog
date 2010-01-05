@@ -1,3 +1,11 @@
+2010-01-04  Mario Carrion  <mario@carrion.mx>
+
+	* repositories/factory.rb: Loads the repositories.
+	* repositories/git.rb, repositories/mercurial.rb, 
+	  repositories/repository.rb, repositories/subversion.rb, 
+	  sremove, slist, screate, sdetect, repositories/bazaar.rb,
+	  utils/environment.rb: Code updated to common guidelines.
+
 2010-01-02  Mario Carrion  <mario@carrion.mx>
 
 	* sdetect: Returns 'branch' value.
